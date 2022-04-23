@@ -63,7 +63,6 @@ std::string Chat::getRooms() const
 
     for (auto [roomName, participants] : rooms)
     {
-        if (roomName != "out_of_room")
             roomNames += roomName + "(" + std::to_string(participants.size()) + ")  ";
     }
 
