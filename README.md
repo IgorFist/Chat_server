@@ -2,8 +2,10 @@
 This repo is multithreading implementation chat server on Boost::Asio. For process message from participants is used pattern State machine.
 
 For chat starting need choose username that is not used. Server have rooms and chat participants are free to move around the rooms.
+## Server commands
 
-## Commands
+1. quit - stop server and exit
+## Client commands
 
 * command start with charachter /
 * in case wrong command, client recieve message about worng command
