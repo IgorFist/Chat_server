@@ -3,6 +3,7 @@ cmake_minimum_required( VERSION 3.0 )
 project(chat_server)
 
 find_package(Boost COMPONENTS system thread program_options REQUIRED)
+find_package(Threads REQUIRED)
 
 include_directories( ./include ./src)
 
@@ -15,5 +16,6 @@ set_target_properties(chat_server PROPERTIES
 )
 target_link_libraries(chat_server 
     ${Boost_LIBRARIES}
+    Threads::Threads
 )
 

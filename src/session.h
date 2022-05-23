@@ -12,7 +12,7 @@ using namespace boost::asio::ip;
 class Session : public ChatParticipant, public std::enable_shared_from_this<Session>
 {
 public:
-    Session(tcp::socket &&socket, Chat &chat);
+    Session(io::io_context& io_socket,tcp::socket &&socket, Chat &chat);
     void start();
     void deliverMessage(const std::string &message) override;
     std::string roomname() const override;
@@ -40,6 +40,7 @@ private:
     void selectChat(const std::vector<std::string> &parsedData);
     void inChat(const std::vector<std::string> &parsedData);
 
+    io::io_context::strand writeStrand;
     tcp::socket socket;
     Chat &chat;
     std::queue<std::string> writeMessages;

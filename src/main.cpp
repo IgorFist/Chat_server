@@ -48,11 +48,20 @@ int main(int argc, char *argv[])
         else
             rooms = "general";
 
-
         io::io_context io_context;
-        tcp::endpoint endpoint(tcp::v4(), port);
-        Server server(io_context, endpoint, rooms);
-        io_context.run();
+        Server server(io_context);
+        server.start(9999, rooms);
+        std::string command;
+
+        while(std::getline(std::cin, command))
+        {
+            if(command == "quit")
+                break;                     
+        }
+        
+        
+        server.stop();
+        
     }
     catch (std::exception &e)
     {

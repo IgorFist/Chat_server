@@ -2,7 +2,10 @@
 #include <iostream>
 #include <iomanip>
 
-Session::Session(tcp::socket &&socket, Chat &chat) : socket(std::move(socket)), chat(chat)
+Session::Session(io::io_context &io_context, tcp::socket &&socket, Chat &chat) : 
+    writeStrand(io_context),
+    socket(std::move(socket)), 
+    chat(chat)
 {
 
     commandDescriptions = std::unordered_map<std::string, std::string>{
@@ -25,14 +28,16 @@ void Session::start()
 
 void Session::deliverMessage(const std::string &message)
 {
-    std::stringstream ss;
-    ss << std::setw(header_length) << std::hex << message.size() << message;
-    bool write_in_progress = !writeMessages.empty();
-    writeMessages.push(ss.str());
-    if (!write_in_progress)
-    {
-        do_write();
-    }
+    io::post(writeStrand, [this, message](){
+        std::stringstream ss;
+        ss << std::setw(header_length) << std::hex << message.size() << message;
+        bool write_in_progress = !writeMessages.empty();
+        writeMessages.push(ss.str());
+        if (!write_in_progress)
+        {
+            do_write();
+        }
+    });
 }
 
 std::string Session::roomname() const
@@ -107,7 +112,7 @@ void Session::do_read_body()
 void Session::do_write()
 {
     auto self = shared_from_this();
-    io::async_write(socket, io::buffer(writeMessages.front()),
+    io::async_write(socket, io::buffer(writeMessages.front()), io::bind_executor(writeStrand,
     [this, self](const boost::system::error_code &ec, size_t)
     {
         if (!ec)
@@ -122,7 +127,7 @@ void Session::do_write()
         {
             endSession();
         }
-    });
+    }));
 }
 
 void Session::endSession()

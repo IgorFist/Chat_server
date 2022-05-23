@@ -6,6 +6,9 @@
 #include <tuple>
 #include <vector>
 #include <string>
+#include <mutex>
+#include <shared_mutex>
+#include <memory>
 
 class ChatParticipant
 {
@@ -22,6 +25,7 @@ class Chat
 {
 public:
     Chat(const std::string &roomNames);
+    void clearChat();
     bool addUser(chatParticipant_ptr participant_ptr, const std::string &username);
     void removeUser(chatParticipant_ptr participant_ptr);
     bool joinToRoom(chatParticipant_ptr participant_ptr, const std::string &roomName);
@@ -33,4 +37,6 @@ public:
 private:
     std::unordered_map<std::string, chatParticipant_ptr> usernames;
     std::unordered_map<std::string,std::unordered_set<chatParticipant_ptr>> rooms;
+    mutable std::shared_mutex usernamesMutex;
+    mutable std::shared_mutex roomsMutex;
 };
