@@ -1,5 +1,5 @@
 # Chat server project
-This repo is one thread implementation chat server on Boost::Asio. For process message from participants is used pattern State machine.
+This repo is multithreading implementation chat server on Boost::Asio. For process message from participants is used pattern State machine.
 
 For chat starting need choose username that is not used. Server have rooms and chat participants are free to move around the rooms.
 
